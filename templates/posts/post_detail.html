@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+<div class="col-4 offset-4">
+    <div class="card" style="padding:10px;">
+        <h1 style="padding:10px;">{{ object.title|title }}</h1><br>
+        <img src="{{ object.thumbnail.url }}" class="card-img-top" alt="...">
+        <hr>
+        <p>
+            <a href="{{ object.get_like_url }}"><span><i class="far fa-thumbs-up fa-lg"></i>{{ object.get_like_count }}</span></a>
+            <span><i class="fas fa-eye ml-2"></i>{{ object.get_postview_count }}</span>
+            <span><i class="far fa-comments ml-2"></i>{{ object.get_comment_count }}</span>
+            <span class="float-right">Posted: {{ object.publish_date|timesince }} ago</span>
+        </p><hr>
+        <p>
+        {{ object.content }}
+        </p>
+        <hr>
+        {% if request.user.is_authenticated %}
+        <h4>Leave a comment here</h4>
+        <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Comment here</button>
+        </form>
+        <hr>
+        <h5>comments</h5>
+        {% for comment in object.comments %}
+        <div>
+        <p>{{ comment.content }} <br>
+        <small>{{ comment.timestamp|timesince}} ago</small></p>
+        </div>
+        {% endfor %}
+        {% else %}
+        <a href="{% url 'account_login' %}" class="btn btn-primary"> Login </a>
+     {% endif %}
+    </div>
+    </div>
+</div>
+
+{% endblock content %}
